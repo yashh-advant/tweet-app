@@ -12,22 +12,18 @@ import { Provider } from 'react-redux';
 import store from './store/store';
 import MyTweets from './component/MyTweets';
 import Authenticator from './component/Authenticator';
+import AuthFormLayout from './layout/AuthFormLayout';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <RootLayout />,
-    loader:userDetailsLoader,
+    loader: userDetailsLoader,
     children: [
       {
         path: '',
         element: <Home />,
       },
-      {
-        path: 'signup',
-        element: <AuthForm submitText="Sign up" func={signup} redirecTo="/login" />,
-      },
-      { path: 'login', element: <AuthForm submitText="Login" func={login} redirecTo="/" /> },
       {
         path: 'my-tweets',
         element: (
@@ -37,6 +33,22 @@ const router = createBrowserRouter([
         ),
       },
     ],
+  },
+  {
+    path: '/signup',
+    element: (
+      <AuthFormLayout>
+        <AuthForm submitText="Sign up" func={signup} redirecTo="/login" />
+      </AuthFormLayout>
+    ),
+  },
+  {
+    path: '/login',
+    element: (
+      <AuthFormLayout>
+        <AuthForm submitText="Login" func={login} redirecTo="/" />{' '}
+      </AuthFormLayout>
+    ),
   },
 ]);
 

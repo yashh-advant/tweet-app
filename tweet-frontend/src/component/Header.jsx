@@ -20,11 +20,11 @@ function Header() {
   };
 
   return (
-    <header className=" shadow-2xl relative  text-gray-500 h-[50px] p-3">
-      <nav>
-        <ul className="flex  items-center ">
+    <header className=" shadow-sm shadow-green-500 relative md:h-[70px] flex  items-center  text-gray-500 h-[50px] p-3">
+      <nav className=" w-full">
+        <ul className="flex justify-start md:text-lg">
           <li>
-            <NavLink className={({ isActive }) => `${isActive ? 'text-blue-500' : ''} ml-10`} to="">
+            <NavLink className={({ isActive }) => `${isActive ? 'text-blue-500' : ''} ml-10`} to="/">
               Tweets
             </NavLink>
           </li>
@@ -32,29 +32,31 @@ function Header() {
           {userDetails && (
             <NavLink
               className={({ isActive }) => `${isActive ? 'text-blue-500' : ''} ml-10`}
-              to="my-tweets"
+              to="/my-tweets"
             >
               My Tweets
             </NavLink>
           )}
 
           {userDetails ? (
-            <li className="self-end ml-auto flex gap-5 pr-8">
-              <button onClick={handleLogout}>{isPending ? 'Logging out' : 'logout'} </button>
+            <li className="self-end ml-auto flex gap-5 pr-8 mr-8">
+              <button className="text-red-300" onClick={handleLogout}>
+                {isPending ? 'Logging out' : 'Logout'}{' '}
+              </button>
               <p className="text-white">{userDetails?.userName}</p>
             </li>
           ) : (
             <li className="self-end ml-auto flex gap-5 pr-8">
               <NavLink
                 className={({ isActive }) => `${isActive ? 'text-blue-500' : ''} ml-10`}
-                to="signup"
+                to="/signup"
               >
                 Sign up
               </NavLink>
 
               <NavLink
                 className={({ isActive }) => `${isActive ? 'text-blue-500' : ''} ml-10`}
-                to="login"
+                to="/login"
               >
                 Login
               </NavLink>

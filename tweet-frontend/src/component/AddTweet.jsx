@@ -46,12 +46,13 @@ function AddTweet({ ref }) {
     <>
       <dialog className=" bg-transparent  min-h-screen min-w-screen   " ref={dialog}>
         <div
-          className="bg-transparent flex justify-center   items-center z-10 min-h-screen min-w-full"
+          className="bg-transparent  flex justify-center   items-center z-10 min-h-screen min-w-full"
           onClick={handleCloseModal}
         >
           <form
+          onClick={(e)=>e.stopPropagation()}
             onSubmit={hanldeSubmit}
-            className="flex w-full max-w-md flex-col gap-5 rounded-2xl border border-gray-700 bg-gray-800 p-8 text-white shadow-lg"
+            className="flex md:w-[400px] z-20 w-[350px] lg:max-w-md flex-col gap-5 rounded-2xl border border-gray-700 bg-gray-800 p-8 text-white shadow-lg"
           >
             <p className="text-center text-2xl font-semibold">Add Tweet</p>
 
