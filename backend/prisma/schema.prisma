@@ -1,0 +1,26 @@
+generator client {
+  provider = "prisma-client-js" // JS client
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  userName String  @unique
+  password String
+  token    String?
+
+  tweets   Tweet[] 
+}
+
+model Tweet {
+  id      Int    @id @default(autoincrement())
+  title   String
+  content String
+
+  userId  Int     
+  user    User    @relation(fields: [userId], references: [id])
+}
