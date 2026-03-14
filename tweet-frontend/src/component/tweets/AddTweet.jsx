@@ -1,12 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
 import React, { useImperativeHandle, useRef, useState } from 'react';
-import { addTweet } from '../services/tweets.service';
-import { useNavigate } from 'react-router';
-// import queryClient from '../lib/QueryClient';
+import { addTweet } from '../../services/tweets.service';
+import queryClient from '../../lib/QueryClient';
 
 function AddTweet({ ref }) {
   const dialog = useRef(null);
-  const navigate = useNavigate();
   const [tweetDetails, setTweetDetails] = useState({
     content: '',
     title: '',
@@ -14,14 +12,28 @@ function AddTweet({ ref }) {
 
   const { mutate, isError, error, isPending } = useMutation({
     mutationFn: addTweet,
-    // onMutate:() => {
-    //   queryClient.getQueriesData({queryKey : []})
-    // },
-    onSuccess: () => {
+    onMutate: async data => {
+      await queryClient.cancelQueries({ queryKey: ['my-tweets'] });
+
+      const prevData = queryClient.getQueryData(['my-tweets']);
+      // console.log(prevData);
+
+      queryClient.setQueryData(['my-tweets'], old => ({
+        ...old,
+        data: [...(old?.data || []), data],
+      }));
+      return { prevData };
+    },
+    onError: (err, data, { prevData }) => {
+      // console.log(prevData);
+      queryClient.setQueriesData(['my-tweets', prevData]);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['my-tweets'] });
       dialog.current.close();
-      navigate('/');
     },
   });
+
   const hanldeSubmit = event => {
     event.preventDefault();
     mutate(tweetDetails);
@@ -50,7 +62,7 @@ function AddTweet({ ref }) {
           onClick={handleCloseModal}
         >
           <form
-          onClick={(e)=>e.stopPropagation()}
+            onClick={e => e.stopPropagation()}
             onSubmit={hanldeSubmit}
             className="flex md:w-[400px] z-20 w-[350px] lg:max-w-md flex-col gap-5 rounded-2xl border border-gray-700 bg-gray-800 p-8 text-white shadow-lg"
           >

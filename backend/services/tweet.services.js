@@ -2,17 +2,41 @@ import ApiResponse from '../utils/apiResponse.js';
 import prismaClient from '../utils/prismaClient.js';
 
 export async function getAllTweets(req, res) {
-  const tweets = await prismaClient.tweet.findMany({
-    include: {
-      user: {
-        select: {
-          userName: true,
-          id: true,
+  try {
+    const userId = req.user?.id;
+
+    const tweets = await prismaClient.tweet.findMany({
+      include: {
+        user: {
+          select: {
+            id: true,
+            userName: true,
+          },
+        },
+        likes: {
+          select: {
+            userId: true,
+          },
         },
       },
-    },
-  });
-  return res.status(201).json(new ApiResponse(tweets, 201, 'Tweets fecthed Successfully'));
+    });
+
+    const formattedTweets = tweets.map(tweet => ({
+      id: tweet.id,
+      title: tweet.title,
+      content: tweet.content,
+      user: tweet.user,
+      likesCount: tweet.likes.length,
+      likedByCurrentUser: tweet.likes.some(like => like.userId === userId),
+    }));
+
+    return res
+      .status(200)
+      .json(new ApiResponse(formattedTweets, 200, 'Tweets fetched successfully'));
+  } catch (error) {
+    console.error('getAllTweets error:', error);
+    return res.status(500).json({ message: error.message });
+  }
 }
 
 export async function addTweet(req, res) {
@@ -93,13 +117,25 @@ export async function getUserTweets(req, res) {
 
   const tweets = await prismaClient.tweet.findMany({
     where: { userId: Number(userId) },
+    include: {
+      likes: {
+        select: {
+          userId: true,
+        },
+      },
+    },
   });
 
-  if (tweets.length == 0) {
-    const err = new Error('Tweet not found');
-    err.statusCode = 404;
-    throw err;
-  }
+  // console.log(tweets);
+  
 
-  return res.status(200).json(new ApiResponse(tweets, 200, ' User Tweets fetched successfully'));
+  const formattedTweets = tweets.map(tweet => ({
+    ...tweet,
+    likesCount:tweet.likes.length,
+    likedByCurrentUser: tweet.likes.some(like => like.userId === userId),
+  }));
+
+  return res
+    .status(200)
+    .json(new ApiResponse(formattedTweets, 200, ' User Tweets fetched successfully'));
 }

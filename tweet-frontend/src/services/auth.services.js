@@ -1,4 +1,4 @@
-const BASE_URI = 'http://localhost:3000/api/v1';
+const BASE_URI = import.meta.env.VITE_BASE_BACKEND_URI;
 
 export const signup = async ({ userName, password }) => {
   const response = await fetch(`${BASE_URI}/users/signup`, {

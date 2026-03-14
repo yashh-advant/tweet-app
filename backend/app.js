@@ -5,12 +5,13 @@ import cookieParser from 'cookie-parser';
 
 import userRouter from './routes/user.router.js';
 import tweetRouter from './routes/tweet.routes.js';
+import likeRouter from './routes/like.routes.js';
 
 const app = express();
 
 app.use(
   cors({
-    origin: process.env.CORS,
+    origin: 'http://localhost:5173',
     credentials: true,
   })
 );
@@ -23,6 +24,7 @@ app.get('/api/v1/health', (req, res) => {
 
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/tweets', tweetRouter);
+app.use('/api/v1/likes', likeRouter);
 
 app.use((err, req, res, next) => {
   const status = err?.statusCode || err?.status || 500;

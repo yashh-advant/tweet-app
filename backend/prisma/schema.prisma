@@ -13,7 +13,8 @@ model User {
   password String
   token    String?
 
-  tweets   Tweet[] 
+  tweets   Tweet[]
+  likes    Like[]
 }
 
 model Tweet {
@@ -21,6 +22,18 @@ model Tweet {
   title   String
   content String
 
-  userId  Int     
+  userId  Int
   user    User    @relation(fields: [userId], references: [id])
+
+  likes   Like[]
+}
+
+model Like {
+  userId  Int
+  tweetId Int
+
+  user  User  @relation(fields: [userId], references: [id])
+  tweet Tweet @relation(fields: [tweetId], references: [id])
+
+  @@id([userId, tweetId])
 }

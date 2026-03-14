@@ -1,4 +1,4 @@
-const BASE_URI = 'http://localhost:3000/api/v1';
+const BASE_URI = import.meta.env.VITE_BASE_BACKEND_URI;
 
 export const addTweet = async ({ title, content }) => {
   const response = await fetch(`${BASE_URI}/tweets`, {
@@ -35,10 +35,12 @@ export const removeTweet = async tweetId => {
 };
 
 export const getAllTweets = async () => {
-  const response = await fetch(`${BASE_URI}/tweets`);
+  const response = await fetch(`${BASE_URI}/tweets`, {
+    credentials: 'include',
+  });
 
   if (!response.ok) {
-    throw new Error('Failed to delete tweet');
+    throw new Error('Failed to fetch tweet');
   }
 
   const data = await response.json();

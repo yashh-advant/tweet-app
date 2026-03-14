@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import React from 'react';
 import { Outlet } from 'react-router';
 import Header from '../component/Header';
@@ -7,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useQuery } from '@tanstack/react-query';
 import { getUserDetails } from '../services/auth.services';
 import { authActions } from '../store/auth-slice';
-import queryClient from '../lib/QueryClient';
+// import queryClient from '../lib/QueryClient';
 
 function RootLayout() {
   const { toastMessage } = useSelector(state => state.ui);
@@ -20,6 +19,7 @@ function RootLayout() {
       dispatch(authActions.dispatchLogin(response.data));
       return response;
     },
+    retry: false,
   });
 
   // console.log(data);
@@ -35,15 +35,15 @@ function RootLayout() {
 
 export default RootLayout;
 
-export const userDetailsLoader = async () => {
-  try {
-    const { data } = await queryClient.fetchQuery({
-      queryKey: ['userData'],
-      queryFn: getUserDetails,
-    });
+// export const userDetailsLoader = async () => {
+//   try {
+//     const { data } = await queryClient.fetchQuery({
+//       queryKey: ['userData'],
+//       queryFn: getUserDetails,
+//     });
 
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
-};
+//     return data;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };

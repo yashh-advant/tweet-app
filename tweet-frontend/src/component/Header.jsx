@@ -1,22 +1,28 @@
 import { useMutation } from '@tanstack/react-query';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, NavLink } from 'react-router';
+import { Link, NavLink, useNavigate } from 'react-router';
 import { logout } from '../services/auth.services';
 import { authActions } from '../store/auth-slice';
+import queryClient from '../lib/QueryClient';
 
 function Header() {
   const { userDetails } = useSelector(state => state.auth);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { mutate, isPending } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: logout,
-    onSuccess: () => {
-      dispatch(authActions.dispatchLogout());
-    },
   });
 
-  const handleLogout = () => {
-    mutate();
+  const handleLogout = async () => {
+    const response = await mutateAsync();
+    console.log(response);
+    if (response.success) {
+      queryClient.clear();
+      dispatch(authActions.dispatchLogout());
+      navigate('/login');
+      return;
+    }
   };
 
   return (
@@ -24,18 +30,30 @@ function Header() {
       <nav className=" w-full">
         <ul className="flex justify-start md:text-lg">
           <li>
-            <NavLink className={({ isActive }) => `${isActive ? 'text-blue-500' : ''} ml-10`} to="/">
+            <NavLink
+              className={({ isActive }) => `${isActive ? 'text-blue-500' : ''} ml-10`}
+              to="/"
+            >
               Tweets
             </NavLink>
           </li>
 
           {userDetails && (
-            <NavLink
-              className={({ isActive }) => `${isActive ? 'text-blue-500' : ''} ml-10`}
-              to="/my-tweets"
-            >
-              My Tweets
-            </NavLink>
+            <>
+              <NavLink
+                className={({ isActive }) => `${isActive ? 'text-blue-500' : ''} ml-10`}
+                to="/my-tweets"
+              >
+                My Tweets
+              </NavLink>
+
+              <NavLink
+                className={({ isActive }) => `${isActive ? 'text-blue-500' : ''} ml-10`}
+                to="/liked-tweets"
+              >
+                Liked Tweets
+              </NavLink>
+            </>
           )}
 
           {userDetails ? (
